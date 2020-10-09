@@ -29,14 +29,27 @@ const xiboIC = (function() {
         headers: [], // Default headers 
         timelimit: 5000, // timelimit in milliseconds
         callbackQueue : [],
-
+        
+        /**
+         * Get URL string
+         */
         getOriginURL: function() {
             if (this.protocol != '' && this.hostName != '') {
                 return this.protocol + '://' + this.hostName + ((this.port != '') ? ':' + this.port : '');
             }
             return '';
         },
-
+        /**
+         * Make a request to the configured server/player
+         * @param  {string} path - Request path
+         * @param  {Object} [options] - Optional params
+         * @param  {string} options.type
+         * @param  {Object[]} options.headers - Request headers in the format {key: key, value: value}
+         * @param  {Object} options.data
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         makeRequest: function(path, {type, headers, data, done, progress, error} = {}) {
             const self = this;
 
@@ -121,10 +134,10 @@ const xiboIC = (function() {
 
         /**
          * Configure the library options
-         * @param  {Object} options
+         * @param  {Object} [options]
          * @param  {string} options.hostName
          * @param  {string} options.port
-         * @param  {Object[]} options.headers
+         * @param  {Object[]} options.headers - Request headers in the format {key: key, value: value}
          * @param  {string} options.headers.key
          * @param  {string} options.headers.value
          * @param  {string} options.protocol
@@ -137,7 +150,13 @@ const xiboIC = (function() {
             _lib.protocol = protocol ? protocol : _lib.protocol;
         },
 
-        // Get player info
+        /**
+         * Get player info
+         * @param  {Object[]} [options] - Request options
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         info: function({ done, progress, error } = {}) {
             _lib.makeRequest(
                 '/info',
@@ -149,7 +168,14 @@ const xiboIC = (function() {
             );
         },
         
-        // Trigger a predefined action
+        /**
+         * Trigger a predefined action
+         * @param  {string} code - The trigger code
+         * @param  {Object[]} [options] - Request options
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         trigger(code, { done, progress, error } = {}) {
             _lib.makeRequest(
                 '/trigger',
@@ -165,7 +191,13 @@ const xiboIC = (function() {
             );
         },
 
-        // Expire widget
+        /**
+         * Expire widget
+         * @param  {Object[]} [options] - Request options
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         expireNow({ done, progress, error } = {}) {
             _lib.makeRequest(
                 '/expirenow',
@@ -178,7 +210,14 @@ const xiboIC = (function() {
             );
         },
         
-        // Extend widget duration
+        /**
+         * Extend widget duration
+         * @param  {string} extend - Duration value to extend
+         * @param  {Object[]} [options] - Request options
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         extendWidgetDuration(extend, { done, progress, error } = {}) {
             _lib.makeRequest(
                 '/extendduration',
@@ -194,7 +233,14 @@ const xiboIC = (function() {
             );
         },
         
-        // Set widget duration
+        /**
+         * Set widget duration
+         * @param  {string} duration - New widget duration
+         * @param  {Object[]} [options] - Request options
+         * @param  {requestCallback} options.done
+         * @param  {requestCallback} options.progress
+         * @param  {requestCallback} options.error
+         */
         setWidgetDuration(duration, { done, progress, error } = {}) {
             _lib.makeRequest(
                 '/setduration',
@@ -210,7 +256,11 @@ const xiboIC = (function() {
             );
         },
 
-        // Add callback function to the queue
+        /**
+         * Add callback function to the queue
+         * @param  {callback} callback - Function to store
+         * @param  {Object[]} [args] - Function arguments
+         */
         addToQueue(callback, ...args) {
             if(typeof callback != 'function') {
                 console.error('Invalid callback function');
@@ -222,7 +272,9 @@ const xiboIC = (function() {
             });
         },
 
-         // Run promised functions in queue
+        /**
+         * Run promised functions in queue
+         */
         runQueue() {
             _lib.callbackQueue.forEach((element) => {
                 element.callback.apply(_lib, element.arguments);
@@ -232,7 +284,9 @@ const xiboIC = (function() {
             _lib.callbackQueue = [];
         },
 
-        // Set visible and run queue
+        /**
+         * Set visible and run queue
+         */
         setVisible() {
             this.isVisible = true;
             this.runQueue();
