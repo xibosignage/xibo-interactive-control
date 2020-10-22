@@ -8,12 +8,13 @@ Copy src/xibo-interactive-control.js to the module folder in the CMS or add to a
 
 ### Add to a CMS module
 
-Library JS file needs to be added to the getResource() method in the module's PHP file.
+Library JS file needs to be added to the getResource() method in the module's PHP file (optionaly we can add the widget/target id).
 
 Example:
 
 ```php
-$javacriptToAdd = '<script type="text/javascript" src="' . $this->getResourceUrl('xibo-interactive-control.js') . '"></script>';
+$javacriptToAdd = '<script type="text/javascript">var xiboICTargetId = ' . $this->getWidgetId() . ';</script>';
+$javacriptToAdd .= '<script type="text/javascript" src="' . $this->getResourceUrl('xibo-interactive-control.js') . '"></script>';
 $data['javaScript'] = $javacriptToAdd;
 return $this->renderTemplate($data);
 ```
@@ -36,9 +37,7 @@ xiboIC.config(libOptions)
 #### All the following methods will have a **reqOptions** parameter with the following options:
 
 - reqOptions.done: callback to run when the request is successful
-- reqOptions.progress: callback to run during the request’s progress
 - reqOptions.error: callback to run when the request fails
-- reqOptions.waitForLoad: Wait for the page to load to run this method
 
 ### Get Player Info
 
@@ -93,6 +92,8 @@ Expire current widget
 xiboIC.expireNow(reqOptions)
 ```
 
+- **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
+
 ### Extend duration
 
 Extend widget duration using a given value
@@ -101,6 +102,9 @@ Extend widget duration using a given value
 xiboIC.extendWidgetDuration(extend, reqOptions)
 ```
 
+- **extend**: value in seconds to be added to the widget current duration
+- **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
+
 ### Set duration
 
 Set widget duration to a given value
@@ -108,3 +112,6 @@ Set widget duration to a given value
 ```javascript
 xiboIC.setWidgetDuration(duration, reqOptions)
 ```
+
+- **duration**: value in seconds to replace the widget current duration
+- **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
