@@ -55,6 +55,7 @@ Trigger action in the parent player
 xiboIC.trigger(code, reqOptions)
 ```
 
+- **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
 - **code**: trigger code for the web-hook that initiates an action in the parent player
 
 ### Add function to the queue
