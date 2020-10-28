@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Xibo.  If not, see <http://www.gnu.org/licenses/>.
  */
-const xiboIC = (function() {
+window.xiboIC = (function() {
     'use strict';
 
     // Private vars
@@ -116,8 +116,17 @@ const xiboIC = (function() {
          * Check if the current widget is visible
          */
         checkVisible: function() { // Check if the widget is hidden or visible
-            const urlParams = new URLSearchParams(location.search);
-            _lib.isVisible = (urlParams.get("visible")) ? (urlParams.get("visible") == 1) : true;
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results == null){
+                   return null;
+                }
+                else {
+                   return decodeURI(results[1]) || 0;
+                }
+            };
+            
+            _lib.isVisible = ($.urlParam("visible")) ? ($.urlParam("visible") == 1) : true;
             return _lib.isVisible;
         },
 

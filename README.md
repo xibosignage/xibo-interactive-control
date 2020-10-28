@@ -4,7 +4,7 @@ This library is meant to be used with Xibo () Digital Signage Players, and handl
 
 ## Instalation
 
-Copy src/xibo-interactive-control.js to the module folder in the CMS or add to any HTML file.
+Copy dist/xibo-interactive-control.min.js to the module folder in the CMS or add to any HTML file.
 
 ### Add to a CMS module
 
