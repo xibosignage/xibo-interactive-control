@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Xibo.  If not, see <http://www.gnu.org/licenses/>.
  */
-const xiboIC = (function() {
+window.xiboIC = (function() {
     'use strict';
 
     // Private vars
@@ -116,8 +116,17 @@ const xiboIC = (function() {
          * Check if the current widget is visible
          */
         checkVisible: function() { // Check if the widget is hidden or visible
-            const urlParams = new URLSearchParams(location.search);
-            _lib.isVisible = (urlParams.get("visible")) ? (urlParams.get("visible") == 1) : true;
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results == null){
+                   return null;
+                }
+                else {
+                   return decodeURI(results[1]) || 0;
+                }
+            };
+            
+            _lib.isVisible = ($.urlParam("visible")) ? ($.urlParam("visible") == 1) : true;
             return _lib.isVisible;
         },
 
@@ -171,16 +180,21 @@ const xiboIC = (function() {
         /**
          * Trigger a predefined action
          * @param  {string} code - The trigger code
+         * @param  {string} [options.targetId] - target id
          * @param  {Object[]} [options] - Request options
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */
-        trigger(code, { done, error } = {}) {
+        trigger(code, { targetId, done, error } = {}) {
+            // Get target id from the request option or from the global lib var
+            var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
+
             _lib.makeRequest(
                 '/trigger',
                 {
                     type: 'POST',
                     data: {
+                        id: id,
                         trigger: code
                     },
                     done: done,
@@ -192,7 +206,7 @@ const xiboIC = (function() {
         /**
          * Expire widget
          * @param  {Object[]} [options] - Request options
-         * @param  {string[]} [options.targetId] - target id
+         * @param  {string} [options.targetId] - target id
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */
@@ -217,7 +231,7 @@ const xiboIC = (function() {
          * Extend widget duration
          * @param  {string} extend - Duration value to extend
          * @param  {Object[]} [options] - Request options
-         * @param  {string[]} [options.targetId] - target id
+         * @param  {string} [options.targetId] - target id
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */
@@ -243,7 +257,7 @@ const xiboIC = (function() {
          * Set widget duration
          * @param  {string} duration - New widget duration
          * @param  {Object[]} [options] - Request options
-         * @param  {string[]} [options.targetId] - target id
+         * @param  {string} [options.targetId] - target id
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */

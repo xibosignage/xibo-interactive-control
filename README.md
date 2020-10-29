@@ -4,7 +4,7 @@ This library is meant to be used with Xibo () Digital Signage Players, and handl
 
 ## Instalation
 
-Copy src/xibo-interactive-control.js to the module folder in the CMS or add to any HTML file.
+Copy dist/xibo-interactive-control.min.js to the module folder in the CMS or add to any HTML file.
 
 ### Add to a CMS module
 
@@ -55,6 +55,7 @@ Trigger action in the parent player
 xiboIC.trigger(code, reqOptions)
 ```
 
+- **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
 - **code**: trigger code for the web-hook that initiates an action in the parent player
 
 ### Add function to the queue
