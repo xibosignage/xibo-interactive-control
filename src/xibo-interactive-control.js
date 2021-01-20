@@ -215,7 +215,7 @@ window.xiboIC = (function() {
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/expirenow',
+                '/duration/expire',
                 {
                     type: 'POST',
                     data: {
@@ -240,7 +240,7 @@ window.xiboIC = (function() {
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/extendduration',
+                '/duration/extend',
                 {
                     type: 'POST',
                     data: {
@@ -266,7 +266,7 @@ window.xiboIC = (function() {
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/setduration',
+                '/duration/set',
                 {
                     type: 'POST',
                     data: {
