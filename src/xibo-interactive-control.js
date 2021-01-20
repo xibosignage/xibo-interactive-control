@@ -229,13 +229,13 @@ window.xiboIC = (function() {
         
         /**
          * Extend widget duration
-         * @param  {string} extend - Duration value to extend
+         * @param  {string} duration - Duration value to extend
          * @param  {Object[]} [options] - Request options
          * @param  {string} [options.targetId] - target id
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */
-        extendWidgetDuration(extend, { targetId, done, error } = {}) {
+        extendWidgetDuration(duration, { targetId, done, error } = {}) {
             // Get target id from the request option or from the global lib var
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
@@ -245,7 +245,7 @@ window.xiboIC = (function() {
                     type: 'POST',
                     data: {
                         id: id,
-                        extend: extend
+                        duration: duration
                     },
                     done: done,
                     error: error
