@@ -34,7 +34,7 @@ xiboIC.config(libOptions)
 - libOptions.port
 - libOptions.headers: Array of headers in the format “key: value” ( e.g. _[{ key: 'Content-Type', value: 'application/x-www-form-urlencoded' }]_ )
 
-#### All the following methods will have a **reqOptions** parameter with the following options:
+#### Some of the following methods will have a **reqOptions** parameter with the following options
 
 - reqOptions.done: callback to run when the request is successful
 - reqOptions.error: callback to run when the request fails
@@ -100,10 +100,10 @@ xiboIC.expireNow(reqOptions)
 Extend widget duration using a given value
 
 ```javascript
-xiboIC.extendWidgetDuration(extend, reqOptions)
+xiboIC.extendWidgetDuration(duration, reqOptions)
 ```
 
-- **extend**: value in seconds to be added to the widget current duration
+- **duration**: value in seconds to be added to the widget current duration
 - **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
 
 ### Set duration
@@ -116,3 +116,39 @@ xiboIC.setWidgetDuration(duration, reqOptions)
 
 - **duration**: value in seconds to replace the widget current duration
 - **reqOptions.targetId**: target widget id ( if not provided, default id will be used )
+
+## Interactions lock - Text selection
+
+The interaction control methods use a boolean flag to lock (true) or unlock (false) a specific behaviour, and defaults to lock (true)
+
+### Text selection
+
+Disables text selection
+
+```javascript
+xiboIC.lockTextSelection(lock)
+```
+
+### Context menu
+
+Prevents right click menu
+
+```javascript
+xiboIC.lockContextMenu(lock)
+```
+
+### Pinch to zoom
+
+Disables pinch to zoom in/out
+
+```javascript
+xiboIC.lockPinchZoom(lock)
+```
+
+### All interactions
+
+Locks all the behaviours (seen above)
+
+```javascript
+xiboIC.lockAllInteractions(lock)
+```

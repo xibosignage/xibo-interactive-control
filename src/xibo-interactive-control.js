@@ -215,7 +215,7 @@ window.xiboIC = (function() {
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/expirenow',
+                '/duration/expire',
                 {
                     type: 'POST',
                     data: {
@@ -229,23 +229,23 @@ window.xiboIC = (function() {
         
         /**
          * Extend widget duration
-         * @param  {string} extend - Duration value to extend
+         * @param  {string} duration - Duration value to extend
          * @param  {Object[]} [options] - Request options
          * @param  {string} [options.targetId] - target id
          * @param  {callback} [options.done]
          * @param  {callback} [options.error]
          */
-        extendWidgetDuration(extend, { targetId, done, error } = {}) {
+        extendWidgetDuration(duration, { targetId, done, error } = {}) {
             // Get target id from the request option or from the global lib var
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/extendduration',
+                '/duration/extend',
                 {
                     type: 'POST',
                     data: {
                         id: id,
-                        extend: extend
+                        duration: duration
                     },
                     done: done,
                     error: error
@@ -266,7 +266,7 @@ window.xiboIC = (function() {
             var id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
 
             _lib.makeRequest(
-                '/setduration',
+                '/duration/set',
                 {
                     type: 'POST',
                     data: {
@@ -313,7 +313,65 @@ window.xiboIC = (function() {
         setVisible() {
             _lib.isVisible = true;
             this.runQueue();
-        }
+        },
+
+        /**
+         * Lock text selection
+         */
+        lockTextSelection(lock = true) {
+            if(lock) {
+                $('<style class="lock-text-selection-style">').append('* {' +
+                    '-webkit-touch-callout: none;' +
+                    '-webkit-user-select: none;' +
+                    '-khtml-user-select: none;' +
+                    '-moz-user-select: none;' +
+                    '-ms-user-select: none;' +
+                    'user-select: none;' +
+                '}').appendTo('head');
+            } else {
+                $('style.lock-text-selection-style').remove();
+            }
+        },
+
+        /**
+         * Lock context menu
+         */
+        lockContextMenu(lock = true) {
+            if(lock) {
+                $('body').attr('oncontextmenu', 'return false;');
+            } else {
+                $('body').removeAttr('oncontextmenu');
+            }
+        },
+
+        /**
+         * Lock pinch zoom
+         */
+        lockPinchZoom(lock = true) {
+            const $viewPortEl = $('head > [name="viewport"]');
+            if(lock) {
+                // Get original value
+                const originalValue = $viewPortEl.attr('content');
+
+                // Backup value as data
+                $viewPortEl.data('viewportValueBackup', originalValue);
+                $viewPortEl.attr('content', originalValue + ' initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            } else {
+                // Restore value
+                if($viewPortEl.data('viewportValueBackup') != undefined) {
+                    $viewPortEl.attr('content', $viewPortEl.data('viewportValueBackup'));
+                }
+            }
+        },
+
+        /**
+         * Lock all properties
+         */
+        lockAllInteractions(lock = true) {
+            this.lockTextSelection(lock);
+            this.lockContextMenu(lock);
+            this.lockPinchZoom(lock);
+        },
     };
 
     // Check visibility on load
