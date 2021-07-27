@@ -1,8 +1,11 @@
 # Xibo Interactive Control
 
-This library is meant to be used with Xibo () Digital Signage Players, and handles the manupilation of ...
+XiboIC or Xibo Interactive Control is a JavaScript helper library used primarily to send actions from Widgets running in Xibo's built in Web Browser, to 
+the Player application itself on its local web server.
 
-## Instalation
+It can also be used by third parties to get information from Xibo and as a helper to trigger actions.
+
+## Installation
 
 Copy dist/xibo-interactive-control.min.js to the module folder in the CMS or add to any HTML file.
 
