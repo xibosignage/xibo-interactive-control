@@ -94,7 +94,7 @@ window.xiboIC = (function() {
 
             // On load complete
             xhr.onload = function() {
-                if(xhr.status == '200') {
+                if(xhr.status >= 200 && xhr.status <= 299) {
                     if (typeof(done) == "function") {
                         done(this);
                     }
