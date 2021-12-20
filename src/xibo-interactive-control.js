@@ -355,7 +355,7 @@ window.xiboIC = (function() {
 
                 // Backup value as data
                 $viewPortEl.data('viewportValueBackup', originalValue);
-                $viewPortEl.attr('content', originalValue + ' initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                $viewPortEl.attr('content', originalValue + ' maximum-scale=1.0, user-scalable=no');
             } else {
                 // Restore value
                 if($viewPortEl.data('viewportValueBackup') != undefined) {
