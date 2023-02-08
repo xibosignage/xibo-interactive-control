@@ -67,6 +67,15 @@
           if (typeof parent.previewActionTrigger == 'function') {
             parent.previewActionTrigger(path, data, done);
           }
+
+          // Stop the method to avoid a request
+          // but send a fake response
+          if (typeof(done) == 'function') {
+            done({
+              status: 200,
+              responseText: 'OK',
+            });
+          }
   
           // Stop the method to avoid a request
           return;
