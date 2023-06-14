@@ -151,6 +151,12 @@ window.xiboIC = (function() {
      * @return {boolean} Preview status
      */
     checkIsPreview: function() {
+      // If we don't have URLSearchParams defined, we're also in preview
+      if (typeof(URLSearchParams) === "undefined") {
+        _lib.isPreview = true;
+        return true;
+      }
+
       // Check if we have the preview flag in URL
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.has('preview') && searchParams.get('preview') == 1) {
