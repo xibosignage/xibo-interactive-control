@@ -413,6 +413,40 @@ window.xiboIC = (function() {
     },
 
     /**
+     * Report fault on requested data
+     * @param {Object[]} [params] - Parameters
+     * @param {string} [params.code] - Fault code
+     * @param {string} [params.reason] - Fault reason
+     * @param {string} [params.key] - Optional key
+     * @param {Object[]} [options] - Request options
+     * @param {string} [options.targetId] - Target id
+     * @param {callback} [options.done]
+     * @param {callback} [options.error]
+     */
+    reportFault(
+      {code, reason, key} = {},
+      {targetId, done, error} = {}
+    ) {      // Get target id from the request option or from the global lib var
+      const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
+      const reportKey = (typeof key != 'undefined') ? key : 'xiboIC_' + id;
+
+      _lib.makeRequest(
+          '/fault',
+          {
+            type: 'POST',
+            data: {
+              code: code,
+              key: reportKey,
+              reason: reason,
+              ttl: 60,
+            },
+            done: done,
+            error: error,
+          },
+      );
+    },
+
+    /**
      * Set global lib var/method
      * @param {string} widgetId - Widget id
      * @param {string} name - Name of the var/method
