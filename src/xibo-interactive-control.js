@@ -415,28 +415,30 @@ window.xiboIC = (function() {
     /**
      * Report fault on requested data
      * @param {Object[]} [params] - Parameters
-     * @param {string} [params.targetId]
-     * @param {string} [params.reason]
-     * @param {boolean} [params.shouldExpire] - Optional expiration
+     * @param {string} [params.code] - Fault code
+     * @param {string} [params.reason] - Fault reason
+     * @param {string} [params.key] - Optional key
      * @param {Object[]} [options] - Request options
+     * @param {string} [options.targetId] - Target id
      * @param {callback} [options.done]
      * @param {callback} [options.error]
      */
     reportFault(
-      {targetId, reason, shouldExpire = true} = {},
-      {done, error} = {}
+      {code, reason, key} = {},
+      {targetId, done, error} = {}
     ) {      // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
+      const reportKey = (typeof key != 'undefined') ? key : 'xiboIC_' + id;
 
       _lib.makeRequest(
           '/fault',
           {
             type: 'POST',
             data: {
-              widgetId: id,
+              code: code,
+              key: reportKey,
               reason: reason,
               ttl: 60,
-              expire: shouldExpire,
             },
             done: done,
             error: error,
