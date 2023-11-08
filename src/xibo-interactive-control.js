@@ -127,6 +127,14 @@ window.xiboIC = (function() {
   // Public library
   const mainLib = {
     /**
+     * Set target id
+     * @param  {string} targetId - The target Id
+     */
+    setTargetId: function(targetId) {
+      _lib.targetId = targetId;
+    },
+
+    /**
      * Check if the current widget is visible
      * @return {boolean} Widget visibility
      */
