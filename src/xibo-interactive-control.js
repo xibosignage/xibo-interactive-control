@@ -173,9 +173,8 @@ window.xiboIC = (function() {
       }
 
       // For the widget preview in viewer
-      if (
-        typeof window.parent.lD != 'undefined' ||
-        typeof window.parent.parent.lD != 'undefined'
+      if (searchParams.has('isEditor') &&
+        searchParams.get('isEditor') === '1'
       ) {
         _lib.isPreview = true;
         return true;
