@@ -124,6 +124,32 @@ window.xiboIC = (function() {
     },
   };
 
+  // Interproccess communication
+  const _IPC = {
+    _callback:undefined,
+    messageHandler: function (evt){
+      if (evt.data && evt.data.ctrl){
+        if (evt.data.ctrl === "rtNotifyData"){
+          if (_IPC.callback){
+            _IPC.callback(evt.data.data);
+          }
+        }
+      }else{
+        console.log(evt);
+      }
+    },
+    registerIPC : function(){
+      window.addEventListener('message', this.messageHandler);
+    },
+    sendData : function(data){
+      // If not in webveiew and not the top window.
+      if ( window.parent && window.parent !== window){
+        // Send data to parent
+        window.parent.postMessage(data, "*");
+      }
+    },
+  }
+
   // Public library
   const mainLib = {
     /**
@@ -493,7 +519,74 @@ window.xiboIC = (function() {
         return _lib[widgetId][name].apply(null, args);
       }
     },
+
+    // Realtime data
+    /**
+     * Get realtime data from the player. Called from the widget.
+     * @param {string} dataSetId The id of the dataset
+     * @param {Object[]} [options] - Request options
+     * @param {callback} [options.done]
+     * @param {callback} [options.error]
+     */
+    getData(dataSetId, {done, error} = {}){
+      _lib.makeRequest(
+        '/realtime?dataSetId='+dataSetId,
+        {
+          type: 'GET',
+          done: done,
+          error: error,
+        },
+      );
+    },
+
+    /**
+     * Set the realtime into the player. Called from Data Connector.
+     * @param {string} dataSetId The id of the dataset
+     * @param {Object[]} data The data for the dataset as JSON array of objects
+     * @param {Object} options - Request options
+     * @param {callback} options.done Optional
+     * @param {callback} options.error Optional
+     */
+    setData(dataSetId, data, {done, error} = {}){
+      _lib.makeRequest(
+        '/realtime?dataSetId='+dataSetId,
+        {
+          type: 'POST',
+          data: data,
+          done: done,
+          error: error,
+        },
+      );
+    },
+
+    /**
+     * Notify main application that we have new data. Called from
+     * @param {string} dataSetId - The id of the dataset
+     * @param {string} widgetId - Optional. Widget id to notify. If omitted, all widgets will be notified.
+     */
+    notifyHost(dataSetId, widgetId) {
+      _IPC.sendData(
+        {
+          ctrl:'rtNotifyHost',
+          data:{
+            dataSetId:dataSetId,
+            widgetId: widgetId
+          }
+        }
+      );
+    },
+
+    /**
+     * Register callback function. Called by widget
+     * @param {callback} callback
+     */
+    registerNotifyDataListener(callback) {
+      _IPC.callback = callback;
+    },
   };
+
+  // Register the IPC handler
+  _IPC.registerIPC();
 
   // Check visibility on load
   mainLib.checkVisible();
