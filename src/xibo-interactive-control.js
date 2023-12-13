@@ -126,27 +126,18 @@ window.xiboIC = (function() {
 
   // Interproccess communication
   const _IPC = {
-    _callback:undefined,
+    _callback: undefined, // Callback function of the widget
     messageHandler: function (evt){
       if (evt.data && evt.data.ctrl){
-        if (evt.data.ctrl === "rtNotifyData"){
-          if (_IPC.callback){
-            _IPC.callback(evt.data.data);
-          }
+        if (evt.data.ctrl === 'rtNotifyData'){
+          xiboIC.notifyData(evt.data.data.datasetId, evt.data.data.widgetId);
         }
       }else{
         console.log(evt);
       }
     },
-    registerIPC : function(){
+    registerIPC: function(){
       window.addEventListener('message', this.messageHandler);
-    },
-    sendData : function(data){
-      // If not in webveiew and not the top window.
-      if ( window.parent && window.parent !== window){
-        // Send data to parent
-        window.parent.postMessage(data, "*");
-      }
     },
   }
 
@@ -523,14 +514,14 @@ window.xiboIC = (function() {
     // Realtime data
     /**
      * Get realtime data from the player. Called from the widget.
-     * @param {string} dataSetId The id of the dataset
-     * @param {Object[]} [options] - Request options
+     * @param {string} dataKey The id of the dataset
+     * @param {Object} [options] - Request options
      * @param {callback} [options.done]
      * @param {callback} [options.error]
      */
-    getData(dataSetId, {done, error} = {}){
+    getData(dataKey, {done, error} = {}){
       _lib.makeRequest(
-        '/realtime?dataSetId='+dataSetId,
+        '/realtime?dataKey='+dataKey,
         {
           type: 'GET',
           done: done,
@@ -541,15 +532,15 @@ window.xiboIC = (function() {
 
     /**
      * Set the realtime into the player. Called from Data Connector.
-     * @param {string} dataSetId The id of the dataset
-     * @param {Object[]} data The data for the dataset as JSON array of objects
+     * @param {string} dataKey The id of the dataset
+     * @param {String} data The data for the dataset as string
      * @param {Object} options - Request options
      * @param {callback} options.done Optional
      * @param {callback} options.error Optional
      */
-    setData(dataSetId, data, {done, error} = {}){
+    setData(dataKey, data, {done, error} = {}){
       _lib.makeRequest(
-        '/realtime?dataSetId='+dataSetId,
+        '/realtime?dataKey='+dataKey,
         {
           type: 'POST',
           data: data,
@@ -560,20 +551,23 @@ window.xiboIC = (function() {
     },
 
     /**
-     * Notify main application that we have new data. Called from
+     * Notify main application that we have new data. Called from data collector.
      * @param {string} dataSetId - The id of the dataset
      * @param {string} widgetId - Optional. Widget id to notify. If omitted, all widgets will be notified.
      */
     notifyHost(dataSetId, widgetId) {
-      _IPC.sendData(
-        {
-          ctrl:'rtNotifyHost',
-          data:{
-            dataSetId:dataSetId,
-            widgetId: widgetId
-          }
-        }
-      );
+      window.notifyHost(dataSetId, widgetId);
+    },
+
+    /**
+     * Notify the widget that we have new data.
+     * @param {string} dataSetId The dataset Id.
+     * @param {string} widgetId  The widget Id.
+     */
+    notifyData(dataSetId, widgetId){
+      if (_IPC.callback){
+        _IPC.callback(dataSetId, widgetId);
+      }
     },
 
     /**
