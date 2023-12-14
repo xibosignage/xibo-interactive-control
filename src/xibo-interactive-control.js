@@ -177,7 +177,7 @@ window.xiboIC = (function() {
      */
     checkIsPreview: function() {
       // If we don't have URLSearchParams defined, we're also in preview
-      if (typeof(URLSearchParams) === "undefined") {
+      if (typeof(URLSearchParams) === 'undefined') {
         _lib.isPreview = true;
         return true;
       }
@@ -449,24 +449,25 @@ window.xiboIC = (function() {
      */
     reportFault(
       {code, reason, key} = {},
-      {targetId, done, error} = {}
-    ) {      // Get target id from the request option or from the global lib var
+      {targetId, done, error} = {},
+    ) {
+      // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
       const reportKey = (typeof key != 'undefined') ? key : 'xiboIC_' + id;
 
       _lib.makeRequest(
-          '/fault',
-          {
-            type: 'POST',
-            data: {
-              code: code,
-              key: reportKey,
-              reason: reason,
-              ttl: 60,
-            },
-            done: done,
-            error: error,
+        '/fault',
+        {
+          type: 'POST',
+          data: {
+            code: code,
+            key: reportKey,
+            reason: reason,
+            ttl: 60,
           },
+          done: done,
+          error: error,
+        },
       );
     },
 
