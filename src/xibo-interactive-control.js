@@ -124,6 +124,23 @@ window.xiboIC = (function() {
     },
   };
 
+  // Interproccess communication
+  const _IPC = {
+    _callback: undefined, // Callback function of the widget
+    messageHandler: function(evt) {
+      if (evt.data && evt.data.ctrl) {
+        if (evt.data.ctrl === 'rtNotifyData') {
+          xiboIC.notifyData(evt.data.data.datasetId, evt.data.data.widgetId);
+        }
+      } else {
+        console.log(evt);
+      }
+    },
+    registerIPC: function() {
+      window.addEventListener('message', this.messageHandler);
+    },
+  };
+
   // Public library
   const mainLib = {
     /**
@@ -494,7 +511,48 @@ window.xiboIC = (function() {
         return _lib[widgetId][name].apply(null, args);
       }
     },
+
+    // Realtime data
+    /**
+     * Get realtime data from the player. Called from the widget.
+     * @param {string} dataKey The id of the dataset
+     * @param {Object} [options] - Request options
+     * @param {callback} [options.done]
+     * @param {callback} [options.error]
+     */
+    getData(dataKey, {done, error} = {}) {
+      _lib.makeRequest(
+        '/realtime?dataKey='+dataKey,
+        {
+          type: 'GET',
+          done: done,
+          error: error,
+        },
+      );
+    },
+
+    /**
+     * Notify the widget that we have new data.
+     * @param {string} dataSetId The dataset Id.
+     * @param {string} widgetId  The widget Id.
+     */
+    notifyData(dataSetId, widgetId) {
+      if (_IPC.callback) {
+        _IPC.callback(dataSetId, widgetId);
+      }
+    },
+
+    /**
+     * Register callback function. Called by widget
+     * @param {callback} callback
+     */
+    registerNotifyDataListener(callback) {
+      _IPC.callback = callback;
+    },
   };
+
+  // Register the IPC handler
+  _IPC.registerIPC();
 
   // Check visibility on load
   mainLib.checkVisible();

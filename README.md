@@ -155,3 +155,39 @@ Locks all the behaviours (seen above)
 ```javascript
 xiboIC.lockAllInteractions(lock)
 ```
+
+## Realtime Data
+
+Get realtime data directly from data connectors 
+
+### Set callback function for notification on new data
+
+Register a callback function to be called when new data arrive  
+
+```javascript
+xiboIC.registerNotifyDataListener(callback)
+```
+- **callback**: The callback function
+
+### Get data
+
+Get realtime data from the player
+
+```javascript
+xiboIC.getData(dataKey, {done, error})
+```
+- **dataKey**: The key of the dataset
+- **object**: callback functions
+
+  {}.done: callback to run when the request is successful
+
+  {}.error: callback to run when the request fails
+
+### Widget notification
+
+Helper function that gets called by the application when new data are available.
+*Internally used.*
+
+```javascript
+notifyData(dataSetId, widgetId)
+```
