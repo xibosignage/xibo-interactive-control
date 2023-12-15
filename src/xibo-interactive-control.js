@@ -127,19 +127,19 @@ window.xiboIC = (function() {
   // Interproccess communication
   const _IPC = {
     _callback: undefined, // Callback function of the widget
-    messageHandler: function (evt){
-      if (evt.data && evt.data.ctrl){
-        if (evt.data.ctrl === 'rtNotifyData'){
+    messageHandler: function(evt) {
+      if (evt.data && evt.data.ctrl) {
+        if (evt.data.ctrl === 'rtNotifyData') {
           xiboIC.notifyData(evt.data.data.datasetId, evt.data.data.widgetId);
         }
-      }else{
+      } else {
         console.log(evt);
       }
     },
-    registerIPC: function(){
+    registerIPC: function() {
       window.addEventListener('message', this.messageHandler);
     },
-  }
+  };
 
   // Public library
   const mainLib = {
@@ -520,7 +520,7 @@ window.xiboIC = (function() {
      * @param {callback} [options.done]
      * @param {callback} [options.error]
      */
-    getData(dataKey, {done, error} = {}){
+    getData(dataKey, {done, error} = {}) {
       _lib.makeRequest(
         '/realtime?dataKey='+dataKey,
         {
@@ -532,41 +532,12 @@ window.xiboIC = (function() {
     },
 
     /**
-     * Set the realtime into the player. Called from Data Connector.
-     * @param {string} dataKey The id of the dataset
-     * @param {String} data The data for the dataset as string
-     * @param {Object} options - Request options
-     * @param {callback} options.done Optional
-     * @param {callback} options.error Optional
-     */
-    setData(dataKey, data, {done, error} = {}){
-      _lib.makeRequest(
-        '/realtime?dataKey='+dataKey,
-        {
-          type: 'POST',
-          data: data,
-          done: done,
-          error: error,
-        },
-      );
-    },
-
-    /**
-     * Notify main application that we have new data. Called from data collector.
-     * @param {string} dataSetId - The id of the dataset
-     * @param {string} widgetId - Optional. Widget id to notify. If omitted, all widgets will be notified.
-     */
-    notifyHost(dataSetId, widgetId) {
-      window.notifyHost(dataSetId, widgetId);
-    },
-
-    /**
      * Notify the widget that we have new data.
      * @param {string} dataSetId The dataset Id.
      * @param {string} widgetId  The widget Id.
      */
-    notifyData(dataSetId, widgetId){
-      if (_IPC.callback){
+    notifyData(dataSetId, widgetId) {
+      if (_IPC.callback) {
         _IPC.callback(dataSetId, widgetId);
       }
     },
