@@ -92,10 +92,6 @@ window.xiboIC = (function() {
       xhr.open(typeToUse, urlToUse, true);
 
       // Set headers
-      if (type == 'POST') {
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-      }
-
       reqHeaders.forEach((header) => {
         xhr.setRequestHeader(header.key, header.value);
       });
