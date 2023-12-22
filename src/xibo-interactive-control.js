@@ -135,7 +135,7 @@ window.xiboIC = (function() {
     messageHandler: function(evt) {
       if (evt.data && evt.data.ctrl) {
         if (evt.data.ctrl === 'rtNotifyData') {
-          xiboIC.notifyData(evt.data.data.datasetId, evt.data.data.widgetId);
+          xiboIC.notifyData(evt.data.data.dataKey, evt.data.data.widgetId);
         }
       } else {
         console.log(evt);
@@ -149,7 +149,7 @@ window.xiboIC = (function() {
         // In preview mode we register a broadcast channel which receives data and notify messages from the
         // data connector user interface, if its open.
         const channel = new BroadcastChannel('xiboDC');
-        channel.addEventListener ('message', (event) => {
+        channel.addEventListener('message', (event) => {
           if (event.data.type === 'xiboDC_notify') {
             // Notify message
             xiboIC.notifyData(event.data.dataKey, _lib.targetId);
