@@ -557,17 +557,16 @@ window.xiboIC = (function() {
           '/realtime?dataKey=' + dataKey,
           {
             type: 'GET',
-            done: function(data) {
+            done: function(xhr) {
               if (done) {
-                var rData = JSON.parse(data.response);
-                if (data.getResponseHeader('Content-Type')
-                  .indexOf('application/json')>-1) {
-                  rData.data = JSON.parse(rData.data);
-                }
-                done(rData.status, rData.data);
+                done(xhr.status, xhr.response);
               }
             },
-            error: error,
+            error: function(xhr) {
+              if (error) {
+                error(xhr.status);
+              }
+            },
           },
         );
       }
