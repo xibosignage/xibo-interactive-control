@@ -557,8 +557,16 @@ window.xiboIC = (function() {
           '/realtime?dataKey=' + dataKey,
           {
             type: 'GET',
-            done: done,
-            error: error,
+            done: function(xhr) {
+              if (done) {
+                done(xhr.status, xhr.response);
+              }
+            },
+            error: function(xhr) {
+              if (error) {
+                error(xhr.status);
+              }
+            },
           },
         );
       }
