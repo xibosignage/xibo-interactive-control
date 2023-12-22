@@ -48,16 +48,16 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Make a request to the configured server/player
-       * @param  {string} path - Request path
-       * @param  {Object} [options] - Optional params
-       * @param  {string} [options.type]
-       * @param  {Object[]} [options.headers]
-       *  Request headers in the format {key: key, value: value}
-       * @param  {Object} [options.data]
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Make a request to the configured server/player
+     * @param  {string} path - Request path
+     * @param  {Object} [options] - Optional params
+     * @param  {string} [options.type]
+     * @param  {Object[]} [options.headers]
+     *  Request headers in the format {key: key, value: value}
+     * @param  {Object} [options.data]
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     makeRequest: function(path, {type, headers, data, done, error} = {}) {
       const self = this;
 
@@ -126,7 +126,12 @@ window.xiboIC = (function() {
 
   // Interproccess communication
   const _IPC = {
-    _callback: undefined, // Callback function of the widget
+    // Callback function of the widget
+    _callback: undefined,
+
+    // Data held in preview mode
+    previewData: {},
+
     messageHandler: function(evt) {
       if (evt.data && evt.data.ctrl) {
         if (evt.data.ctrl === 'rtNotifyData') {
@@ -136,8 +141,24 @@ window.xiboIC = (function() {
         console.log(evt);
       }
     },
+
     registerIPC: function() {
       window.addEventListener('message', this.messageHandler);
+
+      if (_lib.isPreview) {
+        // In preview mode we register a broadcast channel which receives data and notify messages from the
+        // data connector user interface, if its open.
+        const channel = new BroadcastChannel('xiboDC');
+        channel.addEventListener ('message', (event) => {
+          if (event.data.type === 'xiboDC_notify') {
+            // Notify message
+            xiboIC.notifyData(event.data.dataKey, _lib.targetId);
+          } else if (event.data.type === 'xiboDC_data') {
+            // Record the data received.
+            _IPC.previewData[event.data.dataKey] = event.data.data;
+          }
+        });
+      }
     },
   };
 
@@ -201,16 +222,16 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Configure the library options
-       * @param  {Object} [options]
-       * @param  {string} [options.hostName]
-       * @param  {string} [options.port]
-       * @param  {Object[]} [options.headers]
-       *  Request headers in the format {key: key, value: value}
-       * @param  {string} [options.headers.key]
-       * @param  {string} [options.headers.value]
-       * @param  {string} [options.protocol]
-       */
+     * Configure the library options
+     * @param  {Object} [options]
+     * @param  {string} [options.hostName]
+     * @param  {string} [options.port]
+     * @param  {Object[]} [options.headers]
+     *  Request headers in the format {key: key, value: value}
+     * @param  {string} [options.headers.key]
+     * @param  {string} [options.headers.value]
+     * @param  {string} [options.protocol]
+     */
     config: function({hostName, port, headers, protocol} = {}) {
       // Initialise custom request params
       _lib.hostName = hostName ? hostName : _lib.hostName;
@@ -220,11 +241,11 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Get player info
-       * @param  {Object[]} [options] - Request options
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Get player info
+     * @param  {Object[]} [options] - Request options
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     info: function({done, error} = {}) {
       _lib.makeRequest(
         '/info',
@@ -236,13 +257,13 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Trigger a predefined action
-       * @param  {string} code - The trigger code
-       * @param  {string} [options.targetId] - target id
-       * @param  {Object[]} [options] - Request options
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Trigger a predefined action
+     * @param  {string} code - The trigger code
+     * @param  {string} [options.targetId] - target id
+     * @param  {Object[]} [options] - Request options
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     trigger(code, {targetId, done, error} = {}) {
       // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
@@ -262,12 +283,12 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Expire widget
-       * @param  {Object[]} [options] - Request options
-       * @param  {string} [options.targetId] - target id
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Expire widget
+     * @param  {Object[]} [options] - Request options
+     * @param  {string} [options.targetId] - target id
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     expireNow({targetId, done, error} = {}) {
       // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
@@ -286,13 +307,13 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Extend widget duration
-       * @param  {string} duration - Duration value to extend
-       * @param  {Object[]} [options] - Request options
-       * @param  {string} [options.targetId] - target id
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Extend widget duration
+     * @param  {string} duration - Duration value to extend
+     * @param  {Object[]} [options] - Request options
+     * @param  {string} [options.targetId] - target id
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     extendWidgetDuration(duration, {targetId, done, error} = {}) {
       // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
@@ -312,13 +333,13 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Set widget duration
-       * @param  {string} duration - New widget duration
-       * @param  {Object[]} [options] - Request options
-       * @param  {string} [options.targetId] - target id
-       * @param  {callback} [options.done]
-       * @param  {callback} [options.error]
-       */
+     * Set widget duration
+     * @param  {string} duration - New widget duration
+     * @param  {Object[]} [options] - Request options
+     * @param  {string} [options.targetId] - target id
+     * @param  {callback} [options.done]
+     * @param  {callback} [options.error]
+     */
     setWidgetDuration(duration, {targetId, done, error} = {}) {
       // Get target id from the request option or from the global lib var
       const id = (typeof targetId != 'undefined') ? targetId : _lib.targetId;
@@ -338,10 +359,10 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Add callback function to the queue
-       * @param  {callback} callback - Function to store
-       * @param  {Object[]} [args] - Function arguments
-       */
+     * Add callback function to the queue
+     * @param  {callback} callback - Function to store
+     * @param  {Object[]} [args] - Function arguments
+     */
     addToQueue(callback, ...args) {
       if (typeof callback != 'function') {
         console.error('Invalid callback function');
@@ -354,8 +375,8 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Run promised functions in queue
-       */
+     * Run promised functions in queue
+     */
     runQueue() {
       _lib.callbackQueue.forEach((element) => {
         element.callback.apply(_lib, element.arguments);
@@ -366,8 +387,8 @@ window.xiboIC = (function() {
     },
 
     /**
-       * Set visible and run queue
-       */
+     * Set visible and run queue
+     */
     setVisible() {
       _lib.isVisible = true;
       this.runQueue();
@@ -380,13 +401,13 @@ window.xiboIC = (function() {
     lockTextSelection(lock = true) {
       if (lock) {
         $('<style class="lock-text-selection-style">').append('* {' +
-                  '-webkit-touch-callout: none;' +
-                  '-webkit-user-select: none;' +
-                  '-khtml-user-select: none;' +
-                  '-moz-user-select: none;' +
-                  '-ms-user-select: none;' +
-                  'user-select: none;' +
-              '}').appendTo('head');
+          '-webkit-touch-callout: none;' +
+          '-webkit-user-select: none;' +
+          '-khtml-user-select: none;' +
+          '-moz-user-select: none;' +
+          '-ms-user-select: none;' +
+          'user-select: none;' +
+          '}').appendTo('head');
       } else {
         $('style.lock-text-selection-style').remove();
       }
@@ -515,30 +536,42 @@ window.xiboIC = (function() {
     // Realtime data
     /**
      * Get realtime data from the player. Called from the widget.
-     * @param {string} dataKey The id of the dataset
+     * @param {string} dataKey The key where this data is expected to be stored
      * @param {Object} [options] - Request options
      * @param {callback} [options.done]
      * @param {callback} [options.error]
      */
     getData(dataKey, {done, error} = {}) {
-      _lib.makeRequest(
-        '/realtime?dataKey='+dataKey,
-        {
-          type: 'GET',
-          done: done,
-          error: error,
-        },
-      );
+      if (_lib.isPreview) {
+        if (_IPC.previewData[dataKey]) {
+          if (typeof done === 'function') {
+            done(200, _IPC.previewData[dataKey]);
+          }
+        } else {
+          if (typeof error === 'function') {
+            error(404, null);
+          }
+        }
+      } else {
+        _lib.makeRequest(
+          '/realtime?dataKey=' + dataKey,
+          {
+            type: 'GET',
+            done: done,
+            error: error,
+          },
+        );
+      }
     },
 
     /**
-     * Notify the widget that we have new data.
-     * @param {string} dataSetId The dataset Id.
-     * @param {string} widgetId  The widget Id.
+     * Called by the native player host when an associated data connector
+     * notifies that it has changed data on the key provided
+     * @param {string} dataKey The data key
      */
-    notifyData(dataSetId, widgetId) {
+    notifyData(dataKey) {
       if (_IPC.callback) {
-        _IPC.callback(dataSetId, widgetId);
+        _IPC.callback(dataKey);
       }
     },
 
@@ -551,14 +584,14 @@ window.xiboIC = (function() {
     },
   };
 
+  // Check if it's a preview
+  mainLib.checkIsPreview();
+
   // Register the IPC handler
   _IPC.registerIPC();
 
   // Check visibility on load
   mainLib.checkVisible();
-
-  // Check if it's a preview
-  mainLib.checkIsPreview();
 
   return mainLib;
 })();
