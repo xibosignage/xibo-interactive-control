@@ -135,7 +135,7 @@ window.xiboIC = (function() {
     messageHandler: function(evt) {
       if (evt.data && evt.data.ctrl) {
         if (evt.data.ctrl === 'rtNotifyData') {
-          xiboIC.notifyData(evt.data.data.datasetId, evt.data.data.widgetId);
+          xiboIC.notifyData(evt.data.data.dataKey, evt.data.data.widgetId);
         }
       } else {
         console.log(evt);
