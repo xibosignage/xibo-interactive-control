@@ -146,10 +146,11 @@ window.xiboIC = (function() {
       window.addEventListener('message', this.messageHandler);
 
       if (_lib.isPreview) {
-        // In preview mode we register a broadcast channel which receives data and notify messages from the
+        // In preview mode we register a broadcast channel
+        // which receives data and notify messages from the
         // data connector user interface, if its open.
         const channel = new BroadcastChannel('xiboDC');
-        channel.addEventListener ('message', (event) => {
+        channel.addEventListener('message', (event) => {
           if (event.data.type === 'xiboDC_notify') {
             // Notify message
             xiboIC.notifyData(event.data.dataKey);
@@ -438,7 +439,7 @@ window.xiboIC = (function() {
         // Backup value as data
         $viewPortEl.data('viewportValueBackup', originalValue);
         $viewPortEl.attr('content',
-          originalValue + ' maximum-scale=1.0, user-scalable=no');
+          originalValue + ', maximum-scale=1.0, user-scalable=no');
       } else {
         // Restore value
         if ($viewPortEl.data('viewportValueBackup') != undefined) {
