@@ -436,10 +436,15 @@ window.xiboIC = (function() {
         // Get original value
         const originalValue = $viewPortEl.attr('content');
 
+        // Append comma id original value exists
+        if (originalValue) {
+          originalValue += ', ';
+        }
+
         // Backup value as data
         $viewPortEl.data('viewportValueBackup', originalValue);
         $viewPortEl.attr('content',
-          originalValue + ', maximum-scale=1.0, user-scalable=no');
+          originalValue + 'maximum-scale=1.0, user-scalable=no');
       } else {
         // Restore value
         if ($viewPortEl.data('viewportValueBackup') != undefined) {
