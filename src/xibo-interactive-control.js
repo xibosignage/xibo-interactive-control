@@ -434,7 +434,7 @@ window.xiboIC = (function() {
       const $viewPortEl = $('head > [name="viewport"]');
       if (lock) {
         // Get original value
-        const originalValue = $viewPortEl.attr('content');
+        let originalValue = $viewPortEl.attr('content');
 
         // Append comma id original value exists
         if (originalValue) {
