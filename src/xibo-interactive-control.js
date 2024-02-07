@@ -137,8 +137,6 @@ window.xiboIC = (function() {
         if (evt.data.ctrl === 'rtNotifyData') {
           xiboIC.notifyData(evt.data.data.dataKey);
         }
-      } else {
-        console.log(evt);
       }
     },
 
