@@ -31,6 +31,7 @@ window.xiboIC = (function() {
     callbackQueue: [],
     isVisible: true, // Widget visibility on the player
     isPreview: false, // If the library is being used by a preview
+    isEditor: false, // If the library is being used by editor
     targetId:
       (typeof xiboICTargetId != 'undefined') ?
         xiboICTargetId :
@@ -209,11 +210,28 @@ window.xiboIC = (function() {
         return true;
       }
 
+      return false;
+    },
+
+    /**
+     * Check if we're running in editor
+     * @return {boolean}
+     */
+    checkIsEditor: function() {
+      // If we don't have URLSearchParams defined, we're also in preview
+      if (typeof(URLSearchParams) === 'undefined') {
+        _lib.isEditor = false;
+        return false;
+      }
+
+      // Check if we have the preview flag in URL
+      const searchParams = new URLSearchParams(window.location.search);
+
       // For the widget preview in viewer
       if (searchParams.has('isEditor') &&
-        searchParams.get('isEditor') === '1'
+          searchParams.get('isEditor') === '1'
       ) {
-        _lib.isPreview = true;
+        _lib.isEditor = true;
         return true;
       }
 
